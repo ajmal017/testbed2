@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 path = 'E:\stockdata'
-ticker = 'vxx'
+ticker = 'uvxy'
 stock = pd.read_csv(path + os.sep + ticker + '.csv')
 c = list(stock['Close'])
 win = 30

@@ -5,7 +5,7 @@
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <content url="jar://$USER_HOME$/AppData/Local/Programs/Python/Python37/Lib/site-packages/ibapi-9.76.1-py3.7.egg!/" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.7 (venv)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
