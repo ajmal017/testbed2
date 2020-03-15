@@ -5,8 +5,8 @@ import numpy as np
 import os
 
 wins = [30, 45, 60, 75, 90, 105, 120]
-lils = [35]
-t = 'vixy'
+lils = [40]
+t = 'uvxy'
 ctl = 0.8
 lengencies = []
 ctlylist = [ctl] * 200
