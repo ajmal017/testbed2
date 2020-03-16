@@ -2,11 +2,11 @@ from gapstats import gapstatfunc
 import matplotlib.pyplot as plt
 
 symbollist = ['AAPL', 'goog', 'bac', 'fb', 'ba', 'msft', 'v', 'cost', 'dis', 'nvda', 'amzn']
-statgap = [-0.02, 0.02]
+statgap = [-0.05, -0.02]
 dictdict = {}
 for si in symbollist:
     alldict = gapstatfunc(si, statgap)
-    dictdict[si] = alldict[(-0.02, 0.02)]
+    dictdict[si] = alldict[(-0.05, -0.02)]
 
 lglist = []
 for dk, dv in dictdict.items():

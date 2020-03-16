@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from collections import Counter
-import copy
+import random
 import os
 
 
@@ -12,7 +12,7 @@ def dictsort(datas:dict):
     return keys, values
 
 
-def GapStrNew(tdata, gaps=(-0.05, -0.02), win=30, asario=0.2, sk=0.6):
+def GapStrNew(tdata, gaps=(-0.05, -0.02), win=30, asario=0.2, sk=0.6, bias=0.01):
     c = list(tdata['Close'])
     o = list(tdata['Open'])
     h = list(tdata['High'])
@@ -32,8 +32,11 @@ def GapStrNew(tdata, gaps=(-0.05, -0.02), win=30, asario=0.2, sk=0.6):
     PnL = [0]
     PnLNum = [0]
     for gi in gapsnumlist:
+        rd = random.randint(-5, 10)
         up = c[gi - 1]
-        dp = o[gi]
+        biasp = (bias * (rd / 10)) * up
+        up += biasp
+        dp = o[gi] + biasp
         diff = up - dp
         mp = dp + diff * sk
         maxwin = diff * (1 - sk)
@@ -70,12 +73,12 @@ def GapStrNew(tdata, gaps=(-0.05, -0.02), win=30, asario=0.2, sk=0.6):
 
 path = r'E:\stockdata'
 symbollist = ['msft', 'aapl', 'goog', 'ibm', 'bac', 'ba', 'amd', 'dis', 'nvda', 'amzn', 'fb', 'ge', 'pcg', 'v']
-twin = 220 * 5
+twin = 220 * 10
 Datalist = []
 for si in symbollist:
     ticker = pd.read_csv(path + os.sep + si + '.csv')
     ticker = ticker.tail(twin)
-    PnLNum, PnL, totalasset = GapStrNew(ticker, win=45, asario=0.2, sk=0.65)
+    PnLNum, PnL, totalasset = GapStrNew(ticker, win=45, asario=0.2, sk=0.65, bias=0.01)
     PnLNum.pop(0)
     PnL.pop(0)
 
