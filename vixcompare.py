@@ -4,7 +4,7 @@ import os
 
 path = 'E:\stockdata'
 # stickers = ['uvxy', 'vxx', 'vixy', 'vixm', 'tvix', 'viix']
-stickers = ['CNY', 'CYB']
+stickers = ['mchi', 'kweb', 'fxi']
 pdata = {}
 pdatac = {}
 
