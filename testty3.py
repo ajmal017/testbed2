@@ -10,8 +10,8 @@ c = list(stock['Close'])
 vix = vix.tail(len(c))
 vixc = list(vix['Close'])
 startnumlist = []
-win = 120
-lil = 30
+win = 66
+lil = 40
 adjclist = []
 for i in range(len(vixc)):
     if vixc[i] > lil:
