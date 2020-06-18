@@ -4,7 +4,7 @@ import os
 
 path = 'E:\stockdata'
 cyb = pd.read_csv(path + os.sep + 'CYB.csv')
-cny = pd.read_csv(path + os.sep + 'CNY.csv')
+cny = pd.read_csv(path + os.sep + 'CNY=X.csv')
 dlen = min(len(cyb), len(cny))
 
 cyb = cyb.tail(dlen)
@@ -13,10 +13,10 @@ cybC = list(cyb['Close'])
 cnyC = list(cny['Close'])
 
 bc = [1 / i for i in cybC]
-yc = [1 / i for i in cnyC]
+yc = [i for i in cnyC]
 
-br = 1 / bc[0]
-yr = 1 / yc[0]
+br = 100 / bc[0]
+yr = 100 / yc[0]
 
 abc = [i * br for i in bc]
 ayc = [i * yr for i in yc]

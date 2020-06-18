@@ -8,7 +8,7 @@ import numpy as np
 import os
 
 
-def vixrangeminvalues(ticker='uvxy', win=90, lils=[15, 20]):
+def vixrangeminvaluesch(ticker='uvxy', win=90, lils=[15, 20]):
     path = 'E:\stockdata'
     vix = pd.read_csv(path + os.sep + '^VIX.csv')
     stock = pd.read_csv(path + os.sep + ticker + '.csv')
@@ -53,57 +53,46 @@ def vixrangeminvalues(ticker='uvxy', win=90, lils=[15, 20]):
             eprio = (vixp - vixl[i]) / (vixh[i] - vixl[i])
             riolist.append(eprio)
     n = -1
+    coordlist = []
     for iv in startnumlist:
         if iv < len(h) - win:
             n += 1
             subclistl = l[iv: iv + win]
             minl = min(subclistl)
+            endnum = subclistl.index(minl) + iv
             # randrio = randint(0, 100) / 100
             sp = l[iv] + (h[iv] - l[iv]) * riolist[n]
             adjc = (minl - sp) / sp
+            coord = [[iv, endnum], [sp, minl]]
+            coordlist.append(coord)
             adjclist.append(adjc)
 
-    return adjclist
+    return coordlist, adjclist
 
- 
+
 ticker = 'UVXY'
-win = 66
-lils = [15, 20, 25, 30, 35, 40, 50]
-lillist = []
-for li in range(len(lils)):
-    if li == 0:
-        lily = [0, lils[0]]
-        lillist.append(lily)
-        lily = [lils[li], lils[li + 1]]
-        lillist.append(lily)
-    elif li == len(lils) - 1:
-        lily = [lils[li], 1000]
-        lillist.append(lily)
+win = 44
+lils = [15, 20]
+fl = -0.1
+coordlist, adjclist = vixrangeminvaluesch(ticker, win, lils)
+path = 'E:\stockdata'
+stock = pd.read_csv(path + os.sep + ticker + '.csv')
+h = list(stock['High'])
+l = list(stock['Low'])
+
+for si in range(len(h)):
+    plt.plot([si, si], [h[si], l[si]], color='b')
+
+n = -1
+for ci in coordlist:
+    n += 1
+    cl = ''
+    if adjclist[n] > fl:
+        cl = 'r'
     else:
-        lily = [lils[li], lils[li + 1]]
-        lillist.append(lily)
+        cl = 'g'
+    plt.plot(ci[0], ci[1], color=cl)
 
-plotdict = {}
-for lli in lillist:
-    adjlist = vixrangeminvalues(ticker, win=win, lils=lli)
-    if adjlist != []:
-        chist, cbins = cumcovert(adjlist)
-        plotdict[tuple(lli)] = (chist, cbins)
-
-II = []
-for k, v in plotdict.items():
-    Ii = ''
-    II.append(Ii)
-    label = str(k[0]) + ' < VIX < ' + str(k[1])
-    II[-1], = plt.plot(v[1], v[0], label=label)
-
-title = ticker.upper() + ', Win = ' + str(win)
-xticks = np.arange(-0.9, 0.025, 0.025)
-yticks = np.arange(0, 1.025, 0.025)
-plt.xticks(xticks)
-plt.yticks(yticks)
-plt.title(title)
-plt.grid()
 plt.tight_layout()
-plt.legend()
+plt.grid()
 plt.show()

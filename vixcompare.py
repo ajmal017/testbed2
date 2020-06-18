@@ -3,8 +3,12 @@ import pandas as pd
 import os
 
 path = 'E:\stockdata'
-# stickers = ['uvxy', 'vxx', 'vixy', 'vixm', 'tvix', 'viix']
-stickers = ['mchi', 'kweb', 'fxi']
+# stickers = ['uvxy', 'vxx', 'vixy', 'vixm', 'tvix', 'viix', 'vxz', 'xvz']
+# stickers = ['svxy', 'ziv']
+# stickers = ['spy', 'gld', 'uso']
+# stickers = ['pgj', 'kweb', 'fxi', 'mchi', 'gxc', 'kba', 'ashr', 'cnya', '000001.ss', '399001.sz']
+# stickers = ['cny=x', 'cyb']
+stickers = ['^hsi', 'ewh']
 pdata = {}
 pdatac = {}
 
