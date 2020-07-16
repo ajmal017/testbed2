@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("..")
 import matplotlib.pyplot as plt
 from myfuncs import cumcovert
@@ -8,12 +9,13 @@ import numpy as np
 import os
 
 
-def vixrangeminvalues(ticker='uvxy', win=90, lils=[15, 20]):
+def vrlmvfunc(ticker='uvxy', win=90, lils=[15, 20], lwin=22):
     path = 'E:\stockdata'
     vix = pd.read_csv(path + os.sep + '^VIX.csv')
     stock = pd.read_csv(path + os.sep + ticker + '.csv')
     h = list(stock['High'])
     l = list(stock['Low'])
+    c = list(stock['Close'])
 
     vix = vix.tail(len(h))
     vixl = list(vix['Low'])
@@ -56,18 +58,19 @@ def vixrangeminvalues(ticker='uvxy', win=90, lils=[15, 20]):
     for iv in startnumlist:
         if iv < len(h) - win:
             n += 1
-            subclistl = l[iv: iv + win]
-            minl = min(subclistl)
+            subclistl = c[iv + win - lwin: iv + win]
+            lmc = min(subclistl)
             # randrio = randint(0, 100) / 100
             sp = l[iv] + (h[iv] - l[iv]) * riolist[n]
-            adjc = (minl - sp) / sp
+            adjc = (lmc - sp) / sp
             adjclist.append(adjc)
 
     return adjclist
 
- 
+
 ticker = 'uvxy'
-win = 88
+win = 46
+lwin = 22
 lils = [15, 20, 25, 30, 35, 40, 50]
 lillist = []
 for li in range(len(lils)):
@@ -85,7 +88,7 @@ for li in range(len(lils)):
 
 plotdict = {}
 for lli in lillist:
-    adjlist = vixrangeminvalues(ticker, win=win, lils=lli)
+    adjlist = vrlmvfunc(ticker, win=win, lils=lli, lwin=lwin)
     if adjlist != []:
         chist, cbins = cumcovert(adjlist)
         plotdict[tuple(lli)] = (chist, cbins)
@@ -97,10 +100,10 @@ for k, v in plotdict.items():
     label = str(k[0]) + ' < VIX < ' + str(k[1])
     II[-1], = plt.plot(v[1], v[0], label=label)
 
-title = ticker.upper() + ', Win = ' + str(win)
+title = ticker.upper() + ', Win = ' + str(win) + ', Limit Win = ' + str(lwin)
 xticks = np.arange(-0.9, 0.025, 0.025)
 yticks = np.arange(0, 1.025, 0.025)
-plt.xticks(xticks)
+# plt.xticks(xticks)
 plt.yticks(yticks)
 plt.title(title)
 plt.grid()
