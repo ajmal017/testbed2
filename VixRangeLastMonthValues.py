@@ -69,7 +69,7 @@ def vrlmvfunc(ticker='uvxy', win=90, lils=[15, 20], lwin=22):
 
 
 ticker = 'uvxy'
-win = 46
+win = 66
 lwin = 22
 lils = [15, 20, 25, 30, 35, 40, 50]
 lillist = []
