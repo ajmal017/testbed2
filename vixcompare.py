@@ -5,8 +5,8 @@ import os
 path = 'E:\stockdata'
 # stickers = ['uvxy', 'vxx', 'vixy', 'vixm', 'tvix', 'viix', 'vxz', 'xvz']
 # stickers = ['svxy', 'ziv']
-# stickers = ['spy', 'gld', 'uso']
-stickers = ['pgj', 'kweb', 'fxi', 'mchi', 'gxc', 'kba', 'ashr', 'cnya', '000001.ss', '399001.sz']
+stickers = ['slv', 'gld', 'gldm', 'sgol', 'iau', 'sivr']
+# stickers = ['pgj', 'kweb', 'fxi', 'mchi', 'gxc', 'kba', 'ashr', 'cnya', '000001.ss', '399001.sz']
 # stickers = ['cny=x', 'cyb']
 # stickers = ['^hsi', 'ewh']
 pdata = {}

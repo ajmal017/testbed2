@@ -3,10 +3,10 @@ import pandas as pd
 import os
 
 path = 'E:\stockdata2\stocksdata'
-pair = ['jpm', 'iyg']
+pair = ['iyy', 'ivv']
 s1 = pd.read_csv(path + os.sep + pair[0] + '.csv')
 s2 = pd.read_csv(path + os.sep + pair[1] + '.csv')
-dlen = 1100
+dlen = 220
 
 s1 = s1.tail(dlen)
 s2 = s2.tail(dlen)
