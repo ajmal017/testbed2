@@ -2,8 +2,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-path = 'E:\stockdata2\stocksdata'
-pair = ['iyy', 'ivv']
+# path = 'E:\stockdata2\stocksdata'
+path = 'E:\\newdata'
+pair = ['gld', 'iau']
 s1 = pd.read_csv(path + os.sep + pair[0] + '.csv')
 s2 = pd.read_csv(path + os.sep + pair[1] + '.csv')
 dlen = 220

@@ -2,10 +2,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-path = 'E:\stockdata'
+# path = 'E:\stockdata'
 # stickers = ['uvxy', 'vxx', 'vixy', 'vixm', 'tvix', 'viix', 'vxz', 'xvz']
 # stickers = ['svxy', 'ziv']
-stickers = ['slv', 'gld', 'gldm', 'sgol', 'iau', 'sivr']
+path = 'E:\\newdata\Oils\Cleaneddata'
+stickers = ['CL=F', 'QM=F', 'SCO', 'USO', 'UCO', 'USL']
+# stickers = ['slv', 'gld', 'gldm', 'sgol', 'iau', 'sivr']
 # stickers = ['pgj', 'kweb', 'fxi', 'mchi', 'gxc', 'kba', 'ashr', 'cnya', '000001.ss', '399001.sz']
 # stickers = ['cny=x', 'cyb']
 # stickers = ['^hsi', 'ewh']
