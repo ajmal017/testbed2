@@ -2,18 +2,38 @@ import pandas as pd
 import math
 import os
 
-# path = 'E:\\newdata'
-path = 'E:\\newdata\Copper'
-# path2 = 'E:\\newdata\cleaneddataFX'
-path2 = 'E:\\newdata\Copper\cleaneddata'
-buffpath = 'E:\\newdata\Copper\\buff'
-# forexs = ['DX-Y.NYB', 'EURUSD=X', 'GBPUSD=X', 'JPYUSD=X', 'CHFUSD=X', 'CADUSD=X', 'AUDUSD=X', 'NZDUSD=X', 'UUP', 'FXA', 'FXB', 'FXC', 'FXE', 'FXF', 'FXY'] #  'CADUSD', 'AUDUSD', 'NZDUSD',, 'GLD', 'SLV', 'BTCUSD=X', 'CNYUSD=X'
-# forexs = ['DX-Y.NYB', 'FXA', 'FXB', 'FXC', 'FXE', 'FXF', 'FXY', 'UUP', 'UDN', 'USDU']
-# forexs = ['DX-Y.NYB', 'DX=F']
-forexs = ['铜期货历史数据', '铜期货历史数据US']
+
+path = 'E:\\newdata\IV Data\Gold'
+path2 = 'E:\\newdata\IV Data\Gold\cleaneddata'
+buffpath = 'E:\\newdata\IV Data\Gold\\buff'
+
+forexs = ['XAU_USD历史数据', '黄金期货历史数据']
 
 for bi in forexs:
     data = pd.read_csv(path + os.sep + bi + '.csv')
+    dt = data.dtypes
+
+    if str(dt['收盘']) == 'object':
+        c = list(data['收盘'])
+        newc = []
+        for i in c:
+            if type(i) == type('str'):
+                if ',' in i:
+                    pi = i.replace(',', '')
+                    newc.append(pi)
+                else:
+                    newc.append(i)
+            else:
+                newc.append(i)
+        data['收盘'] = newc
+        data.to_csv(buffpath + os.sep + bi + '.csv', index=False)
+    else:
+        data.to_csv(buffpath + os.sep + bi + '.csv', index=False)
+
+
+for bi in forexs:
+    data = pd.read_csv(buffpath + os.sep + bi + '.csv')
+    dt = data.dtypes
     c = list(data['收盘'])
     delidxs = []
     for ci in range(len(c)):

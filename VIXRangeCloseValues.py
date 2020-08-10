@@ -69,7 +69,7 @@ def vrcvfunc(ticker='uvxy', win=90, lils=[15, 20]):
 
 
 ticker = 'uvxy'
-win = 88
+win = 66
 lils = [15, 20, 25, 30, 35, 40, 50]
 lillist = []
 for li in range(len(lils)):
