@@ -3,18 +3,18 @@ import math
 import os
 
 # path = 'E:\\newdata'
-path = 'E:\\newdata\Copper'
+path = r'E:\newdata\dictatorships fx'
 # path2 = 'E:\\newdata\cleaneddataFX'
-path2 = 'E:\\newdata\Copper\cleaneddata'
-buffpath = 'E:\\newdata\Copper\\buff'
+path2 = r'E:\newdata\dictatorships fx\cleaneddata'
+buffpath = r'E:\newdata\dictatorships fx\buff'
 # forexs = ['DX-Y.NYB', 'EURUSD=X', 'GBPUSD=X', 'JPYUSD=X', 'CHFUSD=X', 'CADUSD=X', 'AUDUSD=X', 'NZDUSD=X', 'UUP', 'FXA', 'FXB', 'FXC', 'FXE', 'FXF', 'FXY'] #  'CADUSD', 'AUDUSD', 'NZDUSD',, 'GLD', 'SLV', 'BTCUSD=X', 'CNYUSD=X'
 # forexs = ['DX-Y.NYB', 'FXA', 'FXB', 'FXC', 'FXE', 'FXF', 'FXY', 'UUP', 'UDN', 'USDU']
 # forexs = ['DX-Y.NYB', 'DX=F']
-forexs = ['铜期货历史数据', '铜期货历史数据US']
+forexs = ['PKR=X', 'RUBUSD=X', 'IRRUSD=X']
 
 for bi in forexs:
     data = pd.read_csv(path + os.sep + bi + '.csv')
-    c = list(data['收盘'])
+    c = list(data['Close'])
     delidxs = []
     for ci in range(len(c)):
         if isinstance(c[ci], float):
@@ -27,14 +27,14 @@ for bi in forexs:
 
 dates = []
 for fi in forexs:
-    fdate = list(pd.read_csv(buffpath + os.sep + fi + '.csv')['日期'])
+    fdate = list(pd.read_csv(buffpath + os.sep + fi + '.csv')['Date'])
     dates += fdate
 
 totaldates = list(sorted(list(set(dates))))
 
 deldates = []
 for fi in forexs:
-    fdate = list(pd.read_csv(buffpath + os.sep + fi + '.csv')['日期'])
+    fdate = list(pd.read_csv(buffpath + os.sep + fi + '.csv')['Date'])
     for di in totaldates:
         if di not in fdate:
             deldates.append(di)
@@ -44,7 +44,7 @@ adjdeldates = list(sorted(list(set(deldates))))
 delnumsdict = {}
 for fi in forexs:
     delnums = []
-    fdate = list(pd.read_csv(buffpath + os.sep + fi + '.csv')['日期'])
+    fdate = list(pd.read_csv(buffpath + os.sep + fi + '.csv')['Date'])
     for adi in adjdeldates:
         if adi in fdate:
             idx = fdate.index(adi)

@@ -6,7 +6,7 @@ mvname = '202006-Full-M.csv'
 yvname = '202006-Full-Y.csv'
 savename = '202006-Mergers.csv'
 
-dl = 200
+dl = 500
 mv = pd.read_csv(path + os.sep + mvname)[:dl]
 yv = pd.read_csv(path + os.sep + yvname)[:dl]
 
