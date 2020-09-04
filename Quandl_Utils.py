@@ -10,6 +10,57 @@ import copy
 import os
 
 
+def Quandl_Treasury_Constant_Maturity_Rate_Downloader(maturity='all', savepath=r'E:\newdata\quandl data\Maturity Rate'):
+    if not os.path.exists(savepath):
+        os.mkdir(savepath)
+    maturitydict = {'1M': 'DGS1MO',
+                    '2M': 'DGS2MO',
+                    '3M': 'DGS3MO',
+                    '6M': 'DGS6MO',
+                    '1Y': 'DGS1',
+                    '2Y': 'DGS2',
+                    '3Y': 'DGS3',
+                    '5Y': 'DGS5',
+                    '7Y': 'DGS7',
+                    '10Y': 'DGS10',
+                    '20Y': 'DGS20',
+                    '30Y': 'DGS30'}
+    url1 = 'https://www.quandl.com/api/v3/datasets/FRED/'
+    url3 = '.csv?api_key=fjZyjRt-6y5WRapHGiAY'
+    if maturity == 'all':
+        for k, v in maturitydict.items():
+            url = url1 + v + url3
+            savename = k + '.csv'
+            savefile = savepath + os.sep + savename
+            try:
+                req = request.Request(url)
+                res = request.urlopen(req)
+                file = res.read()
+                f = open(savefile, 'wb')
+                f.write(file)
+                f.close()
+                print(savename, '下载完成！')
+            except:
+                print(savename, '下载失败！')
+                continue
+        print('下载完成！')
+    else:
+        url2 = maturitydict[maturity.upper()]
+        url = url1 + url2 + url3
+        savename = maturity.upper() + '.csv'
+        savefile = savepath + os.sep + savename
+        try:
+            req = request.Request(url)
+            res = request.urlopen(req)
+            file = res.read()
+            f = open(savefile, 'wb')
+            f.write(file)
+            f.close()
+            print(savename, '下载完成！')
+        except:
+            print(savename, '下载失败！')
+
+
 def Chris_Futures_Downloader(symbolnum: int, path=r'E:\newdata\quandl data'):
     # path = r'E:\newdata\quandl data'
     url1 = 'https://www.quandl.com/api/v3/datasets/'
