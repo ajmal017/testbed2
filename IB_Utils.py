@@ -1,6 +1,7 @@
 from ibapi.client import EClient
 from ibapi.wrapper import EWrapper
 from ibapi.contract import Contract, ContractDetails, ComboLeg
+from ibapi.order import Order
 from ibapi.common import *
 from ibapi.ticktype import *
 from iexfinance.stocks import Stock
@@ -459,20 +460,42 @@ def get_Optins_Contract_Detail_bulk(aboveRdays=6, strikeSpan=0.15):
 
 def pick_stricks(last: float, stricks: list, sknum=1):
     stricks = list(sorted(stricks))
+    ps = []
     if last in stricks:
-        return [last]
+        sidx = stricks.index(last)
+        m = sknum // 2
+        y = sknum % 2
+        if y != 0:
+            ps = stricks[sidx - m: sidx + m + 1]
+        else:
+            ps = stricks[sidx - m + 1: sidx + m + 1]
 
     else:
-        stricks = list(sorted(stricks.append(last)))
-        sidx = stricks.index(last)
-        ss = []
-        for i in range(sknum):
-            ss.append(stricks[sidx + i - 1])
-            ss.append(stricks[sidx - i - 1])
-        return list(sorted(ss))
+        stricks_2 = stricks
+        stricks_2.append(last)
+        stricks_3 = list(sorted(stricks_2))
+        sidx = stricks_3.index(last)
+        ds = stricks_3[sidx - 1]
+        us = stricks_3[sidx + 1]
+        nearup = False
+        if us - last <= last - ds:
+            nearup = True
+        m = sknum // 2
+        y = sknum % 2
+        if y == 0:
+            ps = stricks_3[sidx - m: sidx + m + 1]
+            ps.pop(m)
+        else:
+            if nearup:
+                ps = stricks_3[sidx - m: sidx + m + 2]
+                ps.pop(m)
+            else:
+                ps = stricks_3[sidx - m - 1: sidx + m + 1]
+                ps.pop(m + 1)
+    return ps
 
 
-def combo_generator_Switch(symbol: str, cn=2):
+def combo_generator_Switch(symbol: str, lessdays =120):
     specpath = r'E:\newdata\IB data\Option Specs'
     file = specpath + os.sep + symbol + '-specs.json'
     jf = open(file, 'r')
@@ -483,15 +506,99 @@ def combo_generator_Switch(symbol: str, cn=2):
     underlying = pd.read_csv(underlyingfile)
     syms = list(underlying['symbol'])
     idx = syms.index(symbol)
+    last = underlying['Last'][idx]
 
     underlyingleg = ComboLeg()
-    underlyingleg.conId = underlying['conID']
+    underlyingleg.conId = underlying['conID'][idx]
     underlyingleg.ratio = 100
     underlyingleg.action = 'BUY'
     underlyingleg.exchange = 'SMART'
 
+    Pleg = ComboLeg()
+    Pleg.ratio = 1
+    Pleg.action = 'BUY'
+    Pleg.exchange = 'SMART'
+
+    Cleg = ComboLeg()
+    Cleg.ratio = 1
+    Cleg.action = 'SELL'
+    Cleg.exchange = 'SMART'
+
+    contract = Contract()
+    contract.symbol = symbol
+    contract.secType = 'BAG'
+    contract.currency = 'USD'
+    contract.exchange = 'SMART'
+
+    Combos = []
+
+    for mi, di in jdict.items():
+        jm = IBdate_to_Date(mi)
+        today = date.today()
+        if (jm - today).days <= lessdays:
+            stricks = list(di['C'].keys())
+            stricks_1 = [float(i) for i in stricks]
+            ps = pick_stricks(last, stricks_1, 2)
+            for si in ps:
+                Pleg.conId = di['P'][str(si)]['conID']
+                Cleg.conId = di['C'][str(si)]['conID']
+                contract.comboLegs = []
+
+                contract.comboLegs.append(underlyingleg)
+                contract.comboLegs.append(Pleg)
+                contract.comboLegs.append(Cleg)
+                Combos.append([contract, si])
+
+    return Combos
 
 
+class myClient_place_orders(_myClient):
+    def __init__(self):
+        _myClient.__init__(self)
+        self.orderId = ''
+        self.start = False
+        self.orderlist = []
+        self.pid = 0
+
+    def error(self, reqId:TickerId, errorCode:int, errorString:str):
+        print('reqID:', reqId, ' errorCode:', errorCode, ' errorString:', errorString)
+
+    def nextValidId(self, orderId: int):
+        print('Order ID:', orderId)
+
+        if not self.start:
+            self.myOrders_generator()
+            self.start = True
+
+        if self.pid < len(self.orderlist) - 1:
+            self.myPlaceOrder(orderId, self.orderlist[self.pid][0], self.orderlist[self.pid][1])
+            print('PID:', self.pid, '+++++++++++++++++')
+            self.pid += 1
+            time.sleep(0.02)
+
+    def myOrders_generator(self):
+        file = r'E:\newdata\IB data\Underlying_Contract_Details.csv'
+        underlying = pd.read_csv(file)
+        symbols = list(underlying['symbol'])
+        for syi in symbols:
+            Combos = combo_generator_Switch(syi, 120)
+            for coi in Combos:
+                con = coi[0]
+                sk = coi[1]
+                limitPrice = sk * 0.9
+                quantity = 1
+                action = 'BUY'
+
+                order = Order()
+                order.action = action
+                order.orderType = "LMT"
+                order.totalQuantity = quantity
+                order.lmtPrice = limitPrice
+                self.orderlist.append([con, order])
+
+    def myPlaceOrder(self, orderId, contract, order):
+        self.placeOrder(orderId, contract, order)
+        self.reqIds(5)
 
 
 
@@ -514,6 +621,10 @@ if __name__ == '__main__':
     # app.connect('127.0.0.1', 7497, 0)
     # app.run()
 
-    get_Optins_Contract_Detail_bulk()
+    # get_Optins_Contract_Detail_bulk()
 
     # full_contracts_generator()
+
+    app = myClient_place_orders()
+    app.connect('127.0.0.1', 7497, 0)
+    app.run()
