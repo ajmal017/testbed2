@@ -4,6 +4,7 @@ from ibapi.contract import Contract, ContractDetails, ComboLeg
 from ibapi.order import Order
 from ibapi.order_state import OrderState
 from ibapi.common import *
+from ibapi.scanner import ScannerSubscription, ScanData
 from ibapi.ticktype import *
 from iexfinance.stocks import Stock
 import pandas as pd
@@ -13,9 +14,11 @@ from dateutil.relativedelta import relativedelta
 from copy import deepcopy
 import time
 import json
+import sys
+import io
 import os
 
-
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
 
 def IBdate_to_Date(ibdate: str):
     year = int(ibdate[: 4])
@@ -1085,6 +1088,49 @@ class myClient_Place_Order_beta_Box(_myClient):
         self.reqIds(5)
 
 
+class myClient_get_scaner_params(_myClient):
+    def __init__(self):
+        _myClient.__init__(self)
+
+    def nextValidId(self, orderId: int):
+        self.reqScannerParameters()
+
+    def scannerParameters(self, xml: str):
+        print(xml)
+        f = open(r'E:\newdata\IB data\Scaner Parameters.xml', 'w', encoding='utf-8')
+        f.write(xml)
+        f.close()
+
+
+class myClient_myScaner(_myClient):
+    def __init__(self):
+        _myClient.__init__(self)
+        self.snum = 1
+
+    def error(self, reqId: TickerId, errorCode: int, errorString: str):
+        print('reqID:', reqId, ' errorCode:', errorCode, ' errorString:', errorString)
+
+    def nextValidId(self, orderId: int):
+        scanSub = ScannerSubscription()
+        scanSub.instrument = 'STK'
+        scanSub.locationCode = 'STK.US'
+        scanSub.scanCode = 'HIGH_OPT_IMP_VOLAT'
+        scanSub.abovePrice = 100
+        scanSub.numberOfRows = 1000
+        scanSub.scannerSettingPairs = 'Annual, true'
+        self.reqScannerSubscription(1, scanSub, [], [])
+
+    def scannerData(self, reqId:int, rank:int, contractDetails:ContractDetails,
+                     distance:str, benchmark:str, projection:str, legsStr:str):
+        print('第{}个标的：'.format(self.snum))
+        print('reqId:', reqId, ' rank:', rank, ' distance:', distance, ' benchmark:', benchmark, ' projection:', projection, ' legsStr:', legsStr)
+        print('contractDetails:', contractDetails.__str__())
+        self.snum += 1
+
+    def scannerDataEnd(self, reqId:int):
+        print('ScanData 结束！')
+
+
 if __name__ == '__main__':
 
     # app = myClient_get_opt_params()
@@ -1095,6 +1141,10 @@ if __name__ == '__main__':
 
     # get_Optins_Contract_Detail_bulk()
 
-    app = myClient_Place_Order_beta()
+    # app = myClient_Place_Order_beta()
+    # app.connect('127.0.0.1', 7497, 1)
+    # app.run()
+
+    app = myClient_myScaner()
     app.connect('127.0.0.1', 7497, 1)
     app.run()
