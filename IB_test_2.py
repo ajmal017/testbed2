@@ -18,7 +18,7 @@ if __name__ == '__main__':
     SENT_ORDERS = False
 
     if SENT_ORDERS:
-        Pick_Underlyings(greatIV=0.6, greatVOL=200000)
+        Pick_Underlyings(greatIV=0.6, greatVOL=150000)
 
     UDdf = pd.read_csv(UDfile)
     app = myIB_Pro_Client_2(UDdf, True)

@@ -93,7 +93,13 @@ class myClient_m_2(_myClient):
         self.timegapstart = datetime.now()
 
     def Scan(self):
+        pn = 0
         while True:
+            pn += 1
+            if pn >= 50:
+                now = datetime.now()
+                print(now.__str__(), 'Scan运行中.....')
+                pn = 0
             time.sleep(0.1)
             if self.nextIdDone and self.accountDone:
                 if not self.Init_Accot_Pos_OO_OS:
