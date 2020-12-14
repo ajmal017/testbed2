@@ -21,11 +21,18 @@ import io
 import os
 import re
 
+<<<<<<< HEAD
 UnderlyingsPath = r'D:\IB Data\Underlying'
 AdjUnderlyingfile = r'D:\IB Data\Adj Underlying\adjunderlyings.csv'
 ContractDetailsfile = r'E:\newdata\IB data\Underlying Contract Details\Underlying_Contract_Details.csv'
 
 
+=======
+UnderlyingsPath = r'E:\newdata\IB data\underlying'
+AdjUnderlyingfile = r'E:\newdata\IB data\adjunderlying\adjunderlyings.csv'
+ContractDetailsfile = r'E:\newdata\IB data\Underlying Contract Details\Underlying_Contract_Details.csv'
+
+>>>>>>> origin/master
 def mixedType_to_float(x):
     rec = ('C', 'c', ',')
     y = x

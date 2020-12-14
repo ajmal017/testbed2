@@ -10,6 +10,7 @@ import pandas as pd
 import time
 import os
 
+<<<<<<< HEAD
 UDfile = r'D:\IB Data\Adj Underlying\adjunderlyings.csv'
 UDpath = r'D:\IB Data\Underlying Details'
 OSpath = r'D:\IB Data\Option Specs'
@@ -31,6 +32,28 @@ if __name__ == '__main__':
             if i in sy:
                 sy.remove(i)
         app.reqOPT_Paras_Details_batch(symbols=sy)
+=======
+OSpath = r'E:\newdata\IB data\Option Specs'
+UDpath = r'E:\newdata\IB data\Underlying Details'
+UDfile = r'E:\newdata\IB data\adjunderlying\adjunderlyings.csv'
+
+if __name__ == '__main__':
+    SENT_ORDERS = False
+
+    # if SENT_ORDERS:
+    #     Pick_Underlyings(greatIV=0.6, greatVOL=150000)
+
+    UDdf = pd.read_csv(UDfile)
+    app = myIB_Pro_Client_2(UDdf, isTWS=False)
+
+    if SENT_ORDERS:
+        sy = app.reqContract_STK_batch()
+        excludesymbols = ['GRAF', 'SHLL', 'HYLN']
+        for i in excludesymbols:
+            if i in sy:
+                sy.remove(i)
+        # app.reqOPT_Paras_Details_batch(symbols=sy)
+>>>>>>> origin/master
 
         ds = check_delete_bad_specs_2(OSpath)
 
@@ -39,9 +62,16 @@ if __name__ == '__main__':
         OSfiles = os.listdir(OSpath)
         validOrderSymbols = []
         for si in app.dfsymbols:
+<<<<<<< HEAD
             sisp = si + '-specs.json'
             if sisp in OSfiles:
                 validOrderSymbols.append(si)
+=======
+            if si not in excludesymbols:
+                sisp = si + '-specs.json'
+                if sisp in OSfiles:
+                    validOrderSymbols.append(si)
+>>>>>>> origin/master
 
         today = date.today()
         OID = app.NextValidID
