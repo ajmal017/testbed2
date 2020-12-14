@@ -1,31 +1,33 @@
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpathes
 import pandas as pd
-import os
 
-brickfile = r'D:\Other Data\IVE_tickbidask_bricks_simp.csv'
-df = pd.read_csv(brickfile)
-c = list(df['Close'])
-stdo = list(df['Std Open'])
-o = list(df['Open'])
-gn = list(df['Gap Num'])
+symbol = 'EURUSD'
+ipnum = 10
+
+brickfile = r'D:\HIST Data\Bricks\{}-bricks-{}bp.txt'.format(symbol, ipnum)
+TrueFxfile = r'D:\TrueFX Data\Bricks Data\{}-bricks-{}bp.txt'.format(symbol, ipnum)
+df = pd.read_csv(TrueFxfile, header=None)
+c = list(df[2])
+o = list(df[0])
+gn = list(df[3])
 dl = len(c)
 
-initcap = 1000
-SorP = False
+initcap = 10000
+SorP = True
 percent = 3
-expenss = 0.003
+expense = 0
 
 PnL = [initcap]
 pos = 1
 haspos = False
 openforth = None
+popenforth = None
 openpos = False
 openposbarnum = 0
 openprice = 0
 for i in range(dl):
     forth = True
-    if stdo[i] > c[i]:
+    if gn[i] < 0:
         forth = False
 
     if i == 0:
@@ -36,18 +38,18 @@ for i in range(dl):
     else:
         if openforth != forth and not openpos:
             openposbarnum = i + 1
+            popenforth = openforth
             openforth = forth
             openpos = True
 
         if openpos:
             if i == openposbarnum:
                 if haspos:
-                    popenforth = not openforth
                     pnl = 0
                     if popenforth:
-                        pnl = PnL[-1] + (c[i] - openprice - expenss) * pos
+                        pnl = PnL[-1] + (c[i] - openprice - expense) * pos
                     else:
-                        pnl = PnL[-1] + (openprice - c[i] - expenss) * pos
+                        pnl = PnL[-1] + (openprice - c[i] - expense) * pos
 
                     PnL.append(pnl)
                     haspos = False

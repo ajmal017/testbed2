@@ -5,7 +5,7 @@ import os
 clearedfile = r'D:\Other Data\IVE_tickbidask_cleared.csv'
 df = pd.read_csv(clearedfile)
 
-price = list(df['Price'])
+price = df['Price'].values
 chglist = []
 for i in range(len(price)):
     if i > 0:

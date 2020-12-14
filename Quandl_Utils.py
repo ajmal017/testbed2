@@ -424,7 +424,6 @@ def SingalTermday_generator_NG(tdate: date):
     return adjmdays[-3]
 
 
-
 def SingalTermday_generator_GC(tdate: date):
     holidays = []
     US = UnitedStates()
