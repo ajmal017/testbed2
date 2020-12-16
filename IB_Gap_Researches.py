@@ -16,7 +16,7 @@ def myCMP(x: tuple, y: tuple):
 
 
 Fpath = r'E:\stockdata2\stocksdata'
-filelist = os.listdir(Fpath)[:100]
+filelist = os.listdir(Fpath)[:500]
 
 rlen = 1
 gaplist = []
