@@ -21,9 +21,9 @@ import os
 
 # from IB_Utils_4_1 import check_delete_bad_specs
 
-UDpath = r'E:\newdata\IB data\Underlying Details'
-OPpath = r'E:\newdata\IB data\Option Params 2'
-OSpath = r'E:\newdata\IB data\Option Specs'
+UDpath = r'D:\IB Data\Underlying Details'
+OPpath = r'D:\IB Data\Option Params'
+OSpath = r'D:\IB Data\Option Specs'
 
 
 class myClient_m_2(_myClient):
@@ -34,9 +34,10 @@ class myClient_m_2(_myClient):
         self.UDdf = UDdf
         self.dfsymbols = list(self.UDdf['金融产品'])
         self.dfIVs = list(self.UDdf['期权隐含波动率'])
+        # self.dfAbsChg = list(self.UDdf['绝对变化'])
         self.dfPrice = list(self.UDdf['最后价'])
 
-        self.excludesymbols_P = ['HYLN', 'SHLL']
+        self.excludesymbols_P = ['HYLN']
         self.excludesymbols_O = []
 
         self.reqID = 0
@@ -63,7 +64,6 @@ class myClient_m_2(_myClient):
         self.req1 = False
         self.req2 = False
         self.req4 = False
-        self.req5 = False
 
         self.contractDetails_STK_batch_buff = {}
         self.contractDetails_STK_batch_ID_buff = []
@@ -94,13 +94,7 @@ class myClient_m_2(_myClient):
         self.timegapstart = datetime.now()
 
     def Scan(self):
-        pn = 0
         while True:
-            pn += 1
-            if pn >= 50:
-                now = datetime.now()
-                print(now.__str__(), 'Scan运行中.....')
-                pn = 0
             time.sleep(0.1)
             if self.nextIdDone and self.accountDone:
                 if not self.Init_Accot_Pos_OO_OS:
@@ -120,7 +114,7 @@ class myClient_m_2(_myClient):
                 _Position_details_exc = {}
                 for oid, pos in self._Position.items():
                     if pos['position'] != 0:
-                        symbol = pos['contract'].symbol
+                        symbol = pos['contract'].symbol.split(' ')[0]
                         if symbol not in self.excludesymbols_P:
                             if symbol not in _Position_details.keys():
                                 _Position_details[symbol] = {'underlying': {}, 'option': {}}
@@ -277,7 +271,6 @@ class myClient_m_2(_myClient):
             self.Place_Order_batch(parameters)
 
         elif funcID == 5:
-            self.req5 = True
             self.Place_Order_Singal(parameters['orderId'], parameters['contract'], parameters['order'])
 
     def reqContract_STK_batch(self):
@@ -297,13 +290,12 @@ class myClient_m_2(_myClient):
     def reqOPT_Params_Details_batch_1(self, symbols: list):
         optparamsbuff = []
         for si in symbols:
-            if si not in ["DQ", "PINS", "CELH", "GOVT", "FSLY", "FUTU", "TNA", "NVTA", "HYLB", "PAR", "MRNA", "TSLA", "GSX", "RUN", "XPEV", "SWBI", "CVAC", "DKNG", "GRWG", "UVXY", "SPCE", "NIO", "BNTX", "BLI", "OTRK", "PZA", "WKHS"]:
-                uddjfile = UDpath + os.sep + si + '-Details.json'
-                uddetail = Json_to_Dict(uddjfile)
-                conid = int(uddetail['conID'])
-                optparamsbuff.append((self.reqID, si, conid))
-                self.OPT_Params_reqIDs[self.reqID] = si
-                self.reqID += 1
+            uddjfile = UDpath + os.sep + si + '-Details.json'
+            uddetail = Json_to_Dict(uddjfile)
+            conid = int(uddetail['conID'])
+            optparamsbuff.append((self.reqID, si, conid))
+            self.OPT_Params_reqIDs[self.reqID] = si
+            self.reqID += 1
         self.req1 = True
         for oi in optparamsbuff:
             self.reqSecDefOptParams(oi[0], oi[1], '', 'STK', oi[2])
@@ -385,7 +377,6 @@ class myClient_m_2(_myClient):
                 if oid < self.NextValidID:
                     break
         self.req4 = False
-        self.req5 = False
         self.ProClient.APIreturnValues = self.NextValidID
 
     def Place_Order_Singal(self, orderId: int, contract: Contract, order: Order):
@@ -432,7 +423,7 @@ class myClient_m_2(_myClient):
             self.account = accountsList
 
     def updateAccountValue(self, key: str, val: str, currency: str, accountName: str):
-        if not self.req4 or not self.req5:
+        if not self.req4:
             print('----------------账户{}信息-------------------'.format(accountName))
             print('key:', key, ' Value:', val, ' Currency:', currency, ' Account Name:', accountName)
 
@@ -442,7 +433,7 @@ class myClient_m_2(_myClient):
 
     def updatePortfolio(self, contract: Contract, position: float, marketPrice: float, marketValue: float,
                         averageCost: float, unrealizedPNL: float, realizedPNL: float, accountName: str):
-        if not self.req4 or not self.req5:
+        if not self.req4:
             print('-------------------------账户{}组合信息---------------------------'.format(accountName))
             print('contract:', contract, ' position:', position, ' marketPrice:', marketPrice, ' marketValue:', marketValue,
                   ' averageCost:', averageCost, ' unrealizedPNL:', unrealizedPNL, ' realizedPNL:', realizedPNL, ' accountName:', accountName)
@@ -454,14 +445,14 @@ class myClient_m_2(_myClient):
         self._Position[contract.conId] = Portfolio
 
     def accountDownloadEnd(self, accountName: str):
-        if not self.req4 or not self.req5:
+        if not self.req4:
             print('---------------账户{}更新完毕------------------'.format(accountName))
 
         if not self.accountDownloadDone:
             self.accountDownloadDone = True
 
     def openOrder(self, orderId: OrderId, contract: Contract, order: Order, orderState: OrderState):
-        if not self.req4 or not self.req5:
+        if not self.req4:
             print('-----------------openOrder-------------------')
             print('orderId', orderId, ' contract', contract, ' order', order)
             print_Order_State(orderState)
@@ -472,7 +463,7 @@ class myClient_m_2(_myClient):
 
     def orderStatus(self, orderId: OrderId, status: str, filled: float, remaining: float, avgFillPrice: float,
                     permId: int, parentId: int, lastFillPrice: float, clientId: int, whyHeld: str, mktCapPrice: float):
-        if not self.req4 or not self.req5:
+        if not self.req4:
             print('-----------------orderStatus-------------------')
             print('orderId', orderId, ' status', status, ' filled', filled, ' remaining', remaining,
                   ' avgFillPrice', avgFillPrice, ' permId', permId, ' parentId', parentId,
@@ -487,7 +478,7 @@ class myClient_m_2(_myClient):
         self._OrderStatus[orderId] = orderStatus
 
     def openOrderEnd(self):
-        if not self.req4 or not self.req5:
+        if not self.req4:
             print('OpenOrder 完毕！')
 
         if not self.openOrderDone:

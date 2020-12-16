@@ -2,8 +2,8 @@ import yfinance as yf
 import pandas as pd
 import os
 
-path = 'E:\stockdata2\stocksdata'
-symbolscsv = 'E:\stockdata2\symbols.csv'
+path = 'D:\Yahoo Data\Stocks'
+symbolscsv = 'D:\IEX Data\symbols.csv'
 symbols = list(pd.read_csv(symbolscsv)['symbol'])
 tn = len(symbols)
 n = 0

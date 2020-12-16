@@ -1,5 +1,6 @@
 from IB_Utils_4 import myClient_m_2
 import pandas as pd
+from datetime import datetime
 
 
 class myClient_m_conversion(myClient_m_2):
@@ -8,6 +9,7 @@ class myClient_m_conversion(myClient_m_2):
         self.place_orders_choice_data = {}
 
     def extendFunc(self):
+        print(datetime.now().isoformat(), 'Scanning.....')
         place_orders_choice_data = {'API_over_Capital_total': False, 'Singular_over_Capital': [], 'Singular_Right': {}}
 
         API_over_Capital_total = self.AccontValue_details['ABS_API_Capital'] > \
