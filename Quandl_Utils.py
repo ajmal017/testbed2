@@ -191,6 +191,51 @@ def QuandlDfCleaner(dflist: list, dfreverse=False):
     return redflist
 
 
+def QuandlDfCleaner_2(dflist: list, cindex='Date', cvalue='Last', dfreverse=False):
+    cdflist = []
+    for dfi in dflist:
+        if dfreverse:
+            cdf1 = dfi.iloc[::-1].reset_index(drop=True)
+        else:
+            cdf1 = dfi
+        last = cdf1[cvalue]
+        n = 0
+        c1delnums = []
+        for li in last:
+            if li == 0 or math.isnan(li):
+                c1delnums.append(n)
+            n += 1
+        cdf2 = cdf1.drop(index=c1delnums).reset_index(drop=True)
+        cdflist.append(cdf2)
+
+    redflist = []
+    fulldate = []
+    for dfi1 in cdflist:
+        date1 = list(dfi1[cindex])
+        fulldate += date1
+    fulldate = list(sorted(list(set(fulldate)), key=functools.cmp_to_key(myStrDateSort)))
+
+    deldate = []
+    for dfi2 in cdflist:
+        date2 = list(dfi2[cindex])
+        for ddi2 in fulldate:
+            if ddi2 not in date2:
+                deldate.append(ddi2)
+
+    for dfi3 in cdflist:
+        date3 = list(dfi3[cindex])
+        sdelnums = []
+        for ddi3 in deldate:
+            if ddi3 in date3:
+                idx = date3.index(ddi3)
+                sdelnums.append(idx)
+
+        cdf = dfi3.drop(index=sdelnums).reset_index(drop=True)
+        redflist.append(cdf)
+
+    return redflist
+
+
 def myDirScan_OnlyFile(path: str):
     filelist = []
     for roots, dirs, files in os.walk(path):
@@ -377,7 +422,6 @@ def SingalTermday_generator_NG(tdate: date):
                 adjmdays.append(mi)
 
     return adjmdays[-3]
-
 
 
 def SingalTermday_generator_GC(tdate: date):

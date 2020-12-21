@@ -1,0 +1,14 @@
+matplotlib~=3.2.0
+pandas~=1.0.5
+numpy~=1.18.1
+scipy~=1.4.1
+PyQt5~=5.15.0
+ibapi~=9.76.1
+iexfinance~=0.4.3
+python-dateutil~=2.8.1
+xlrd~=1.2.0
+workalendar~=10.3.0
+secedgar~=0.2.0
+yfinance~=0.1.54
+tushare~=1.2.59
+binance~=0.3
